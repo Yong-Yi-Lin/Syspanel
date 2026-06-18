@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript">
+        $(function() {
+            var errorCookie = document.cookie.split("; ").find(function(item) {
+                return item.startsWith("error=");
+            });
+            if (errorCookie) {
+                alert(errorCookie.split("=")[1]);
+            }
+        });
+    </script>
+</head>
+<body>
+<h1>用户</h1>
+</body>
+</html>

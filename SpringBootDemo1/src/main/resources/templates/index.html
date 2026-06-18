@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"><!--thymeleaf namespace  -->
+<head>
+    <meta charset="UTF-8">
+    <title>Insert title here</title>
+    <link rel="stylesheet" href="./css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="./css/bootstrap-theme.min.css"/>
+    <script src="./js/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="./js/bootstrap.js"></script>
+    <script type="text/javascript">
+        $(function() {
+            var errorCookie = document.cookie.split("; ").find(function(item) {
+                return item.startsWith("error=");
+            });
+            if (errorCookie) {
+                alert(errorCookie.split("=")[1]);
+            }
+        });
+
+        $(document).ready(function() {
+            $("#registerbtn").click(function (){
+                window.location.href = '/register';
+            });
+
+            $("#loginbtn").click(function () {
+                var formData = new FormData($("#loginform")[0]); // 获取表单数据并转换为FormData对象
+// 获取表单数据并转换为FormData对象
+//                 var formData = new FormData($("#loginform")[0]);
+
+                // 验证用户名和密码是否已填写
+                var username = $("#loginform input[name='userName']").val(); // 假设用户名输入框的name属性为'username'
+                var password = $("#loginform input[name='password']").val(); // 假设密码输入框的name属性为'password'
+
+                if (!username || !password) {
+                    // 如果用户名或密码为空，则给出提示并停止后续操作
+                    alert("请填写用户名和密码！");
+                    return; // 退出函数
+                }
+                // 输出formData对象中的所有键值对
+                for (var pair of formData.entries()) {
+                    console.log(pair[0] + '----' + pair[1]);
+                }
+                console.log(formData);
+                $.ajax({
+                    type: "POST",
+                    url: '/login/checkUser', // 注册用户的接口地址
+                    data: formData, // 发送的数据
+                    processData: false, // 对于FormData对象，设置为false
+                    contentType: false, // 对于FormData对象，设置为false
+                    success: function (response) {
+                        if (response.code===2000) {
+                            alert("登录成功！");
+                            if(response.data==="guest"){
+                                window.location.href = '/userPage';
+                            }else if(response.data==="admin"){
+                                window.location.href = '/adminPage';
+                            }
+                            // 清空表单
+                            $("#loginform")[0].reset();
+                        } else {
+                            alert("用户名或密码错误！" + response.message);
+                        }
+                    },
+                    error: function() {
+                        alert("请求失败，请重试");
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">spring boot example</h3>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="page-header">
+            <h2>用户登录</h2>
+            <form class="form-horizontal" id="loginform" >
+                <div class="form-group">
+                    <div class="input-group col-md-4">
+								<span class="input-group-addon">
+									<i class="glyphicon glyphicon-user"></i>
+								</span>
+                        <input class="form-control" placeholder="用户名/邮箱" type="text" name="userName" id="loginname"/>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group col-md-4">
+								<span class="input-group-addon">
+									<i class="glyphicon glyphicon-lock"></i>
+								</span>
+                        <input class="form-control" placeholder="密码" type="text" name=password id="password"/>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-4">
+                        <div class="btn-group btn-group-justified">
+                            <span class="btn-group">
+                                <button type="button" class="btn btn-success" id="loginbtn">
+                                    <span class="glyphicon glyphicon-log-in"></span>
+                                    登录
+                                </button>
+                            </span>
+                            <span class="btn-group">
+                                <button type="button" class="btn btn-danger" id="registerbtn">
+                                    <span class="glyphicon glyphicon-edit"></span>
+                                    注册
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div><a href="/find">忘记密码？</a></div>
+</body>
+</html>

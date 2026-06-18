@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="./css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="./css/bootstrap-theme.min.css"/>
+    <script src="./js/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var sendMailResult; // 用于存储#sendMail的响应结果
+            $("#sendMail").click(function (){
+                // 获取上次发送验证码的时间戳
+                var email = $('#email').val();
+                var dataToSend = {
+                    email: email
+                };
+                // 检查验证码是否有效的请求
+                $.ajax({
+                    type: "POST", // 或者POST，取决于你的服务器API设计
+                    url: '/verification-code/checkIsExpired',
+                    data: dataToSend,// 发送的数据
+                    success: function(response) {
+                        if (response.code!==2000) {
+                            // 验证码有效
+                            alert("验证码仍有效，请稍后再试！");
+                        } else {
+                            $.ajax({
+                                type: "POST",
+                                url: '/verification-code/sendmail', // 注册用户的接口地址
+                                data: dataToSend,// 发送的数据
+                                success: function (response) {
+                                    sendMailResult = response.code;
+                                    console.log(response);
+                                    alert(response.message);
+                                },
+                                error: function() {
+                                    alert("请求失败，请重试");
+                                }
+                            });
+                        }
+                    },
+                    error: function() {
+                        alert("请求失败，请重试");
+                    }
+                });
+            });
+
+
+            $("#reset-button").click(function () {
+                if (sendMailResult!==2000) {
+                    alert("请先发送邮件再重置密码");
+                    return;
+                }
+                var formData = new FormData($("#reset_form")[0]); // 获取表单数据并转换为FormData对象
+                // formData.append('sendMailResult', JSON.stringify(sendMailResult));
+                // 输出formData对象中的所有键值对
+                for (var pair of formData.entries()) {
+                    console.log(pair[0] + '----' + pair[1]);
+                }
+                console.log(formData);
+                $.ajax({
+                    type: "POST",
+                    url: '/resetPwd/checkUser', // 注册用户的接口地址
+                    data: formData, // 发送的数据
+                    processData: false, // 对于FormData对象，设置为false
+                    contentType: false, // 对于FormData对象，设置为false
+                    success: function (response) {
+                        if (response.code===2000) {
+                            alert("密码更新成功！");
+                            // 清空表单
+                            $("#reset_form")[0].reset();
+                        } else {
+                            alert("密码更新失败：" + response.message);
+                        }
+                    },
+                    error: function() {
+                        alert("请求失败，请重试");
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+<h1>重置密码</h1>
+<form id="reset_form">
+    <input type="email" placeholder="请输入你的邮箱" name="email" id="email">
+    <input type="button" id="sendMail" value="发送验证码"><br>
+    <label>验证码三分钟内有效，请填写完毕后及时提交</label>
+    <input type="number" placeholder="请输入验证码" name="verificationCode" id="verificationCode"><br>
+    <label>新密码</label><br>
+    <label>* 密码必须包含一个大写字母，一个小写字母，一个数字和一个特殊字符。</label>
+    <input type="password" placeholder="请输入新的密码" name="password" id="password"><br>
+    <label>重复密码</label><br>
+    <input type="password" placeholder="再次输入密码" name="repassword" id="repassword"><br>
+
+</form>
+<button id="reset-button">重置</button>
+</body>
+</html>

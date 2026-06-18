@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>ECharts</title>
+    <!-- 引入 echarts.js -->
+    <script src="/js/echarts.min.js"></script>
+    <script src="/js/jquery-1.11.3.min.js"></script>
+</head>
+<body>
+<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+<div id="main" style="width: 900px;height:400px;"></div>
+<script type="text/javascript">
+    $(function(){
+        // 基于准备好的dom，初始化echarts实例
+        // var myChart = echarts.init(document.getElementById('main'));
+        var chartDom = document.getElementById('main');
+        var myChart = echarts.init(chartDom);
+        var data;
+        var showTime = [];
+        var showValue = [];
+
+        // 先默认添加10个元素
+        for(let i=0; i < 1; i++){
+            showTime.push(getTime());
+            showValue.push(0.0);
+        }
+        //初始化echarts
+        let option = {
+            title: {
+                    left: 'center',
+                    text: 'CPU利用率%'
+                },
+            tooltip: {
+                trigger: 'axis'
+            },
+            xAxis: {
+                type: 'category',
+                data: showTime
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [
+                {
+                    data: showValue,
+                    type: 'line'
+                }
+            ]
+        };
+        option && myChart.setOption(option);
+        //获取时间
+        function getTime(){
+            let time = new Date();
+            return time.toLocaleString();
+        }
+        //定时更新
+        setInterval(function(){
+            $.ajax({
+                type: "Get",
+                url: "/cpu/getCpu_usage",
+                contentType: "application/json",
+                success: function (res) {
+                    data = res.data;
+                    console.log(data+data.type);
+                }
+            });
+            //当长度大于10时，去除数组首元素
+            if(showTime.length > 10){
+                showTime.shift();
+                // data.shift();
+                showValue.shift();
+            }
+            //将新值添加到数组中
+            showTime.push(getTime());
+            showValue.push(data);
+            //重新绘制
+            myChart.setOption(option);
+        },10000);
+    });
+
+
+    // function fetchData(){
+    //     $.ajax({
+    //         type: "Get",
+    //         url: "/cpu/getCpu_usage",
+    //         contentType: "application/json",
+    //         success: function (res) {
+    //             data = res.data;
+    //             console.log(data);
+    //             updateChart(data);
+    //         }
+    //     });
+    // }
+    //
+    // $(document).ready(function() {
+    //     fetchData(); // 立即获取一次数据
+    //     setInterval(fetchData, 2000); // 启动定时器
+    // });
+
+
+    // function updateChart(showTime,data) {
+    //     // 假设data的结构是{categories: [...], series: [...]}
+    //     myChart.setOption({
+    //         xAxis: {
+    //             data: showTime
+    //         },
+    //         series: [{
+    //             // 根据实际情况修改，例如折线图数据
+    //             data: data
+    //         }]
+    //     });
+    // }
+
+</script>
+</body>

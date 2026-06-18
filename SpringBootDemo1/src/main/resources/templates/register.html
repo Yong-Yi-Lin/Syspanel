@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+
+  <script src="./js/jquery-1.11.3.min.js"></script>
+  <script type="text/javascript" src="./js/bootstrap.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $("#sendMail").click(function (){
+        // 获取上次发送验证码的时间戳
+        var email = $('#email').val();
+        var dataToSend = {
+          email: email
+        };
+// 检查验证码是否有效的请求
+        $.ajax({
+          type: "POST", // 或者POST，取决于你的服务器API设计
+          url: '/verification-code/checkIsExpired',
+          data: dataToSend,// 发送的数据
+          success: function(response) {
+            if (response.code!==2000) {
+              // 验证码有效
+              alert("验证码仍有效，请稍后再试！");
+            } else {
+              // 验证码无效或不存在，可以发送新的验证码
+              // 发送验证码的逻辑...
+              $.ajax({
+                type: "POST",
+                url: '/verification-code/sendmail', // 注册用户的接口地址
+                data: dataToSend,// 发送的数据
+                success: function (response) {
+                  console.log(response);
+                  alert(response.message);
+
+                },
+                error: function() {
+                  alert("请求失败，请重试");
+                }
+              });
+            }
+          },
+          error: function() {
+            alert("请求失败，请重试");
+          }
+        });
+        console.log(email);
+
+      });
+      $("#registerUser").click(function () {
+        var formData = new FormData($("#registration_form")[0]); // 获取表单数据并转换为FormData对象
+
+        // 输出formData对象中的所有键值对
+        for (var pair of formData.entries()) {
+          console.log(pair[0] + '----' + pair[1]);
+        }
+        console.log(formData);
+        $.ajax({
+          type: "POST",
+          url: '/register/addUser', // 注册用户的接口地址
+          data: formData, // 发送的数据
+          processData: false, // 对于FormData对象，设置为false
+          contentType: false, // 对于FormData对象，设置为false
+          success: function (response) {
+            if (response.code===2000) {
+              alert("用户注册成功！");
+              // 清空表单
+              $("#registration_form")[0].reset();
+            } else {
+              alert("用户注册失败：" + response.message);
+            }
+          },
+          error: function() {
+            alert("请求失败，请重试");
+          }
+        });
+      });
+    });
+  </script>
+</head>
+<body>
+<div>
+  <h2>User Registration</h2>
+  <form id="registration_form" target="frameName" enctype="multipart/form-data">
+    <input type="text" placeholder="Username" name="userName" required><br>
+    <input type="text" placeholder="Real Name" name="realName" required><br>
+    <input type="password" placeholder="Password" name="password" required><br>
+<!--    <input type="email" placeholder="Email" name="email" required>-->
+    <input type="email" placeholder="请输入你的邮箱" name="email" id="email">
+    <input type="button" id="sendMail" value="发送验证码"><br>
+    <label>验证码三分钟内有效，请填写完毕后及时提交</label><br>
+    <input type="number" placeholder="请输入验证码" name="verificationCode" id="verificationCode"><br>
+    <input type="text" placeholder="Phone Number" name="phone" required><br>
+    <label for="sex-select">Select Gender:</label>
+    <select id="sex-select" name="sex" required>
+      <option value="male">male</option>
+      <option value="female">female</option>
+    </select>
+    <br>
+    <label for="role-select">Select Role:</label>
+    <select id="role-select" name="role" required>
+      <option value="guest">guest</option>
+      <option value="admin">admin</option>
+    </select>
+    <br>
+<!--    <input type="file" name="imageFile" value="点击上传头像">-->
+<!--    <input class="btn" type="submit" id="anxia" value="上传">-->
+
+    <input type="button" id="registerUser" value="Register">
+  </form>
+
+<!--  <iframe style="display: none;" frameborder="0" name="frameName"></iframe>-->
+</div>
+
+</body>
+</html>

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+  <script src="/js/echarts.min.js"></script>
+  <script src="/js/jquery-1.11.3.min.js"></script>
+  <script>
+    window.onload = function () {
+      let chartDom1 = document.getElementById('cpu_usage');
+      let myChart1 = echarts.init(chartDom1);
+      let chartDem2 = document.getElementById('memory_use');
+      let myChart2 = echarts.init(chartDem2);
+      let chartDem3 = document.getElementById('memory_usage');
+      let myChart3 = echarts.init(chartDem3);
+
+      let all_data;
+      let data_cpu = 0;
+      let data_use = 0;
+      let data_usage = 0;
+      const showValue1 = [0];
+      const showValue2 = [0];
+      const showValue3 = [0];
+
+      let option1 = {
+        series: [
+          {
+            type: 'gauge',
+            startAngle: 90,
+            endAngle: -270,
+            pointer: {
+              show: false
+            },
+            progress: {
+              show: true,
+              overlap: false,
+              roundCap: true,
+              clip: false,
+              itemStyle: {
+                borderWidth: 1,
+                borderColor: '#464646'
+              }
+            },
+            axisLine: {
+              lineStyle: {
+                width: 20
+              }
+            },
+            splitLine: {
+              show: false,
+              distance: 0,
+              length: 10
+            },
+            axisTick: {
+              show: false
+            },
+            axisLabel: {
+              show: false,
+              distance: 50
+            },
+            data: [
+                {
+                    value: showValue1,
+                    name: 'cpu利用率',
+                    title: {
+                        offsetCenter: ['0%', '20%']
+                    },
+                    detail: {
+                        valueAnimation: true,
+                        offsetCenter: ['0%', '0%']
+                    }
+                },
+            ],
+            title: {
+              fontSize: 14
+            },
+            detail: {
+              width: 30,
+              height: 20,
+              fontSize: 20,
+              color: 'inherit',
+              borderColor: 'inherit',
+              // borderRadius: 20,
+              // borderWidth: 1,
+              formatter: '{value}%'
+            }
+          }
+        ]
+      };
+      option1 && myChart1.setOption(option1);
+
+        let option2 = {
+            series: [
+                {
+                    type: 'gauge',
+                    startAngle: 90,
+                    endAngle: -270,
+                    pointer: {
+                        show: false
+                    },
+                    progress: {
+                        show: true,
+                        overlap: false,
+                        roundCap: true,
+                        clip: false,
+                        itemStyle: {
+                            borderWidth: 1,
+                            borderColor: '#464646'
+                        }
+                    },
+                    axisLine: {
+                        lineStyle: {
+                            width: 20
+                        }
+                    },
+                    splitLine: {
+                        show: false,
+                        distance: 0,
+                        length: 10
+                    },
+                    axisTick: {
+                        show: false
+                    },
+                    axisLabel: {
+                        show: false,
+                        distance: 50
+                    },
+                    data: [
+                        {
+                            value: showValue2,
+                            name: '内存使用情况GB',
+                            title: {
+                                offsetCenter: ['0%', '20%']
+                            },
+                            detail: {
+                                valueAnimation: true,
+                                offsetCenter: ['0%', '0%']
+                            }
+                        },
+                    ],
+                    title: {
+                        fontSize: 14
+                    },
+                    detail: {
+                        width: 30,
+                        height: 20,
+                        fontSize: 20,
+                        color: 'inherit',
+                        borderColor: 'inherit',
+                        // borderRadius: 20,
+                        // borderWidth: 1,
+                        formatter: '{value}GB'
+                    }
+                }
+            ]
+        };
+        option2 && myChart2.setOption(option2);
+
+        let option3 = {
+            series: [
+                {
+                    type: 'gauge',
+                    startAngle: 90,
+                    endAngle: -270,
+                    pointer: {
+                        show: false
+                    },
+                    progress: {
+                        show: true,
+                        overlap: false,
+                        roundCap: true,
+                        clip: false,
+                        itemStyle: {
+                            borderWidth: 1,
+                            borderColor: '#464646'
+                        }
+                    },
+                    axisLine: {
+                        lineStyle: {
+                            width: 20
+                        }
+                    },
+                    splitLine: {
+                        show: false,
+                        distance: 0,
+                        length: 10
+                    },
+                    axisTick: {
+                        show: false
+                    },
+                    axisLabel: {
+                        show: false,
+                        distance: 50
+                    },
+                    data: [
+                        {
+                            value: showValue3,
+                            name: '内存利用率',
+                            title: {
+                                offsetCenter: ['0%', '20%']
+                            },
+                            detail: {
+                                valueAnimation: true,
+                                offsetCenter: ['0%', '0%']
+                            }
+                        },
+                    ],
+                    title: {
+                        fontSize: 14
+                    },
+                    detail: {
+                        width: 30,
+                        height: 20,
+                        fontSize: 20,
+                        color: 'inherit',
+                        borderColor: 'inherit',
+                        // borderRadius: 20,
+                        // borderWidth: 1,
+                        formatter: '{value}%'
+                    }
+                }
+            ]
+        };
+        option2 && myChart2.setOption(option2);
+
+
+      setInterval(function () {
+        $.ajax({
+          type: "Get",
+          url: "/SystemInfo2/getCpu_usage",
+          contentType: "application/json",
+          success: function (res) {
+            all_data = res.data;
+            // console.log(all_data);
+
+            data_cpu = all_data["cpuInfo"]["cpu利用率"];
+            data_use = all_data["memoryInfo"]["已使用内存"];
+            data_usage = all_data["memoryInfo"]["内存利用率"]
+          }
+        });
+          showValue1.shift();
+          showValue2.shift();
+          showValue3.shift();
+          showValue1.push(data_cpu);
+          showValue2.push(data_use);
+          showValue3.push(data_usage);
+
+          myChart1.setOption(option1);
+          myChart2.setOption(option2);
+          myChart3.setOption(option3);
+      }, 1000);
+    }
+
+  </script>
+</head>
+<body>
+<div>
+    <div id="cpu_usage" style="float:left; width: 300px;height:300px;"></div>
+    <div id="memory_use" style="float:left;width: 300px;height:300px;"></div>
+    <div id="memory_usage" style="float:left; width: 300px;height:300px;"></div>
+    <div style="clear:both;"></div>
+</div>
+</body>
+</html>

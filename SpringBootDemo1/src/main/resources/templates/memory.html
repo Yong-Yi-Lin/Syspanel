@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>ECharts</title>
+    <!-- 引入 echarts.js -->
+    <script src="/js/echarts.min.js"></script>
+    <script src="/js/jquery-1.11.3.min.js"></script>
+    <style>
+        body{
+            background-color: #02102c;
+        }
+    </style>
+</head>
+<body>
+<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+<div>
+    <div>
+        <div class="row" style="margin:20px 20px">
+            <div class="col-md-5 col-md-offset-3" style="box-shadow: 2px 2px 5px #bbb;padding:10px 10px;border-radius:5px">
+                <div style="height:500px;" id="memory_usage" class="card-box"></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!--    <div id="memory_usage" style="float:left;width: 1650px;height:400px;"></div>-->
+    <div id="memory_use" style="float:left;width: 450px;height:300px;"></div>
+    <!--<div id="memory_Total" style="width: 600px;height:300px;"></div>-->
+    <div id="memory_rest" style="float:left;width: 450px;height:300px;"></div>
+    <div style="clear:both;"></div>
+</div>
+<script type="text/javascript">
+    window.onload = function () {
+        const chartDom1 = document.getElementById('memory_usage');
+        const chartDom2 = document.getElementById('memory_use');
+        const chartDom3 = document.getElementById('memory_rest');
+        const myChart1 = echarts.init(chartDom1);
+        // const myChart2 = echarts.init(chartDom2);
+        // const myChart3 = echarts.init(chartDom3);
+
+        let data1;
+        let newData_usage;
+        let newData_use;
+        let newData_rest;
+        const showTime = [];
+        const showValue1 = [];
+        const showValue2 = [];
+        const showValue3 = [];
+        let time;
+        let i = 0;
+
+        // 先默认添加10个元素
+        // for(let i=0; i < 7; i++){
+        //     showTime.push(getTime());
+        //     showValue1.push(0.0);
+        //     showValue2.push(0.0);
+        //     showValue3.push(0.0);
+        //     // memory();
+        // }
+        //初始化echarts
+        let option1 = {
+            title: {
+                left: 'center',
+                text: 'cpu利用率%'
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                data: showTime,
+                axixLine: {
+                    show: true,
+                    lineStyle: {
+                        color: "#FFFFFF"
+                    }
+                },
+                axisLabel:{
+                    // show:true,
+                    textStyle:{
+                        color:"#FFFFFF",
+                        fontSize:14
+                    }
+                }
+            },
+            yAxis: {
+                type: 'value',
+                axixLine:{
+                    show:true,
+                    lineStyle:{
+                        color:"#FFFFFF",
+                        wdith:3,
+                        type:"solid"
+                    }
+                },
+                axisLabel:{
+                    show:true,
+                    textStyle:{
+                        color:"#FFFFFF",
+                        fontSize:14
+                    }
+                }
+            },
+            series: [
+                {
+                    data: showValue1,
+                    type: 'line',
+                    // areaStyle: {},
+                    symbolSize: 8,
+                    lineStyle: {
+                        color: '#FFFFFF',
+                        width: 3
+                    }
+                }
+            ]
+        };
+        option1 && myChart1.setOption(option1);
+        memory();
+        // let option2 = {
+        //     title: {
+        //         left: 'center',
+        //         text: '已使用内存GB'
+        //     },
+        //     tooltip: {
+        //         trigger: 'axis'
+        //     },
+        //     xAxis: {
+        //         type: 'category',
+        //         boundaryGap: false,
+        //         data: showTime
+        //     },
+        //     yAxis: {
+        //         type: 'value'
+        //     },
+        //     series: [
+        //         {
+        //             data: showValue2,
+        //             type: 'line',
+        //             areaStyle: {}
+        //         }
+        //     ]
+        // };
+        // option2 && myChart2.setOption(option2);
+        //
+        // let option3 = {
+        //     title: {
+        //         left: 'center',
+        //         text: '剩余内存GB'
+        //     },
+        //     tooltip: {
+        //         trigger: 'axis'
+        //     },
+        //     xAxis: {
+        //         type: 'category',
+        //         boundaryGap: false,
+        //         data: showTime
+        //     },
+        //     yAxis: {
+        //         type: 'value'
+        //     },
+        //     series: [
+        //         {
+        //             data: showValue3,
+        //             type: 'line',
+        //             areaStyle: {}
+        //         }
+        //     ]
+        // };
+        // option3 && myChart3.setOption(option3);
+
+
+
+        function getTime(){
+            let time = new Date();
+            return time.toLocaleString();
+        }
+
+        function memory() {
+            //定时更新
+            setInterval(function(){
+                $.ajax({
+                    type: "Get",
+                    url: "/SystemInfo2/getCpu_usage",
+                    // async: true,
+                    contentType: "application/json",
+                    success: function (res) {
+                        data1 = res.data;
+                        console.log(data1);
+                        time = data1.currentTime
+                        newData_usage = data1.cpuUtilization
+                        // newData_usage = data1.memoryUtilization
+                        newData_use = data1.usedDiskSpace
+                        newData_rest = data1.freeMemory
+                        // newData_usage = data1.memoryInfo.内存利用率;
+                        // newData_use = data1.memoryInfo.已使用内存;
+                        // newData_rest = data1.memoryInfo.剩余内存;
+                        // console.log(newData_usage.type)
+                        // console.log(data1);
+
+                        if (showTime.length>=7){
+                            showTime.shift();
+                            showValue1.shift();
+                            showValue2.shift();
+                            showValue3.shift();
+                        }
+
+                        showTime.push(time)
+                        showValue1.push(newData_usage);
+                        showValue2.push(newData_use);
+                        showValue3.push(newData_rest);
+
+                        myChart1.setOption(option1);
+                        // myChart2.setOption(option2);
+                        // myChart3.setOption(option3);
+                    }
+                });
+                //当长度大于10时，去除数组首元素
+                // if(showTime.length > 5){
+                //     showTime.shift();
+                //     showValue1.shift();
+                //     showValue2.shift();
+                //     showValue3.shift();
+                // }
+                // // 将新值添加到数组中
+                // showTime.push(time)
+                // // showTime.push(getTime());
+                // showValue1.push(newData_usage);
+                // showValue2.push(newData_use);
+                // showValue3.push(newData_rest);
+                // // 重新绘制
+                // // updateChart(data);
+                // // updateChart(showTime,data);
+                // myChart1.setOption(option1);
+                // myChart2.setOption(option2);
+                // myChart3.setOption(option3);
+
+
+            }, 1000);
+        }
+
+    }
+</script>
+</body>
+</html>
+</body>

@@ -1,0 +1,33 @@
+#server:
+#  port: 8080
+#spring:
+#  application:
+#    name: SpringBootDemo1
+#  datasource:
+#    type: com.alibaba.druid.pool.DriverDataSource
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url:jdbc:mysql://localhost:3306/springdb?serverTimezone=Asia/Shanghai
+#    username:root
+#    password:lhw
+#    initialSize:5
+#    minIdle:5
+#    maxActive:20
+#    maxWait:60000
+#    timeBetweenEvictionRunsMillis:60000
+#    minEvictableIdleTimeMillis:300000
+#    validationQuery:SELECT1FORMDUAL
+#    testWhileIdle:true
+#    testOnBorrow:true
+#    testOnReturn:false
+#    filters:stat,wall,log4j
+#    logSlowSql:true
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#      https://blog.csdn.net/qi341500/article/details/128872757
