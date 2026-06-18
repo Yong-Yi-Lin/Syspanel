@@ -1,0 +1,5 @@
+[1125/081508.808:INFO:crash_reporting.cc(219)] Crash reporting enabled for process: browser
+[1125/081509.319:INFO:crash_reporting.cc(219)] Crash reporting enabled for process: browser
+[1125/081509.781:INFO:crash_reporting.cc(219)] Crash reporting enabled for process: gpu-process
+[1125/081510.110:INFO:crash_reporting.cc(219)] Crash reporting enabled for process: utility
+[1125/081709.649:INFO:crash_reporting.cc(219)] Crash reporting enabled for process: gpu-process

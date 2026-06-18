@@ -1,0 +1,68 @@
+{
+  "name": "vueadmin",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "cross-env VUE_APP_ENV=dev vue-cli-service serve",
+    "build": "cross-env VUE_APP_ENV=production vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "serve": "SET NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service serve",
+    "build": "SET NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service build"
+  },
+  "dependencies": {
+    "axios": "^0.24.0",
+    "core-js": "^3.37.1",
+    "echarts": "^5.5.0",
+    "echarts-liquidfill": "^3.1.0",
+    "element-china-area-data": "^5.0.2",
+    "element-resize-detector": "^1.2.4",
+    "element-ui": "^2.15.6",
+    "file-saver": "^2.0.5",
+    "fuse.js": "^6.4.6",
+    "identify": "^0.1.5",
+    "jquery": "^3.7.1",
+    "js-export-excel": "^1.1.4",
+    "marked": "^13.0.2",
+    "mavon-editor": "^2.10.4",
+    "sass": "^1.77.8",
+    "sortablejs": "^1.15.2",
+    "vue": "^2.6.11",
+    "vue-baidu-map": "^0.21.22",
+    "vue-cropper": "^0.5.8",
+    "vue-markdown-editor": "^0.2.0",
+    "vue-router": "^3.2.0",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-plugin-router": "^4.5.15",
+    "@vue/cli-service": "~4.5.0",
+    "babel-eslint": "^10.1.0",
+    "cross-env": "^7.0.3",
+    "eslint": "^6.7.2",
+    "eslint-plugin-vue": "^6.2.2",
+    "less-loader": "^6.0.0",
+    "sass-loader": "^10.5.2",
+    "vue-template-compiler": "^2.6.11"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "parser": "babel-eslint"
+    },
+    "rules": {}
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}
